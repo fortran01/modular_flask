@@ -1,0 +1,12 @@
+secrets.md
+__pycache__/
+*.pyc
+instance/
+.webassets-cache
+.env
+.flaskenv
+venv/
+*.venv
+.venv/
+
+archive/
