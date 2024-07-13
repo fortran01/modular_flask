@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Loyalty Program</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+</head>
+<body>
+    <h1>Customer Loyalty Program</h1>
+    
+    <!-- Login Form -->
+    <div id="login-form">
+        <label for="customer-id">Customer ID:</label>
+        <input type="text" id="customer-id" name="customer-id" required>
+        <button onclick="login()">Login</button>
+    </div>
+    
+    <!-- Shopping Window -->
+    <div id="shopping-window" style="display: none;">
+        <h2>Shopping Window</h2>
+        <div id="product-list"></div>
+        <button onclick="checkout()">Checkout</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+    
+    <div id="result"></div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
