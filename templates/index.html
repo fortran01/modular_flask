@@ -8,20 +8,31 @@
 <body>
     <h1>Customer Loyalty Program</h1>
     
+    {% if not logged_in %}
     <!-- Login Form -->
     <div id="login-form">
         <label for="customer-id">Customer ID:</label>
         <input type="text" id="customer-id" name="customer-id" required>
         <button onclick="login()">Login</button>
     </div>
-    
+    {% else %}
     <!-- Shopping Window -->
-    <div id="shopping-window" style="display: none;">
+    <div id="shopping-window">
         <h2>Shopping Window</h2>
-        <div id="product-list"></div>
+        <div id="product-list">
+            {% for product in products %}
+            <div class="product">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" width="100" height="100">
+                <p>{{ product.name }}</p>
+                <p>Price: ${{ product.price }}</p>
+                <button onclick="addToCart({{ product.id }})">Add to Cart</button>
+            </div>
+            {% endfor %}
+        </div>
         <button onclick="checkout()">Checkout</button>
         <button onclick="logout()">Logout</button>
     </div>
+    {% endif %}
     
     <div id="result"></div>
     
