@@ -48,7 +48,7 @@ class LoyaltyAccounts(Base):
     __tablename__: str = 'LoyaltyAccounts'
     id = Column(Integer, primary_key=True)
     customer_id = Column(Integer, ForeignKey('Customers.id'))
-    points = Column(Integer)
+    points = Column(Integer, default=0)
     customer = relationship('Customers', backref='loyalty_accounts', lazy=True)
 
 
@@ -87,6 +87,7 @@ class Products(Base):
         name (str): Name of the product.
         price (Numeric): Price of the product.
         category_id (int): Identifier for the associated category.
+        image_url (str): URL of the product image.
         category (relationship): Relationship to the associated category.
     """
     __tablename__: str = 'Products'
@@ -94,6 +95,7 @@ class Products(Base):
     name = Column(String(255))
     price = Column(Numeric(10, 2))
     category_id = Column(Integer, ForeignKey('Categories.id'))
+    image_url = Column(String(255))  # Add the image_url field
     category = relationship('Categories', backref='products', lazy=True)
 
 
