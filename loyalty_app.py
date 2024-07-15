@@ -37,14 +37,27 @@ def login() -> Response:
     Returns:
         Response: JSON response indicating success or failure of login.
     """
-    customer_id: str = request.form['customer_id']
+    if not request.json or 'customer_id' not in request.json:
+        app.logger.error("Login attempt without customer_id")
+        response = jsonify({'success': False, 'error': 'Missing customer ID'})
+        response.status_code = 400
+        return response
+
+    customer_id: str = request.json['customer_id']
+    app.logger.debug(f"Attempting login for customer_id: {customer_id}")
+
     customer: Customers | None = db.session.query(Customers).get(customer_id)
     if customer:
         response = jsonify({'success': True})
         response.set_cookie('customer_id', customer_id)
+        app.logger.debug(f"Login successful for customer_id: {customer_id}")
         return response
     else:
-        return jsonify({'success': False, 'error': 'Invalid customer ID'})
+        app.logger.error(
+            f"Invalid login attempt for customer_id: {customer_id}")
+        response = jsonify({'success': False, 'error': 'Invalid customer ID'})
+        response.status_code = 401
+        return response
 
 
 @app.route('/logout')
