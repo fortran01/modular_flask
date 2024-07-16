@@ -15,9 +15,9 @@
         <input type="text" id="customer-id" name="customer-id" required>
         <button onclick="login()">Login</button>
     </div>
+    <div id="shopping-window"></div>
     {% else %}
     <!-- Shopping Window -->
-    <div id="shopping-window">
         <h2>Shopping Window</h2>
         <div id="product-list">
             {% for product in products %}
@@ -31,9 +31,16 @@
         </div>
         <button onclick="checkout()">Checkout</button>
         <button onclick="logout()">Logout</button>
+    {% endif %}
+    </div>
+    
+    {% if logged_in %}
+    <div id="cart">
+        <h2>Your Cart</h2>
+        <ul id="cart-items"></ul>
     </div>
     {% endif %}
-    
+
     <div id="result"></div>
     <div id="error-messages"></div>
     

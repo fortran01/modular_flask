@@ -1,3 +1,5 @@
+let cart = [];
+
 function login() {
   const customerId = document.getElementById("customer-id").value;
 
@@ -7,7 +9,7 @@ function login() {
       if (response.data.success) {
         document.getElementById("login-form").style.display = "none";
         document.getElementById("shopping-window").style.display = "block";
-        loadProducts();
+        location.reload();
       } else {
         document.getElementById("result").innerHTML =
           "Error: " + response.data.error;
@@ -24,9 +26,7 @@ function logout() {
     .get("/logout")
     .then(function (response) {
       if (response.data.success) {
-        document.getElementById("login-form").style.display = "block";
-        document.getElementById("shopping-window").style.display = "none";
-        document.getElementById("product-list").innerHTML = "";
+        location.reload();
       }
     })
     .catch(function (error) {
@@ -35,38 +35,32 @@ function logout() {
     });
 }
 
-function loadProducts() {
-  axios
-    .get("/products")
-    .then(function (response) {
-      const products = response.data.products;
-      const productList = document.getElementById("product-list");
-
-      products.forEach(function (product) {
-        const productElement = document.createElement("div");
-        productElement.innerHTML = `
-              <img src="${product.image_url}" alt="${product.name}" width="100" height="100">
-              <p>${product.name}</p>
-              <p>Price: $${product.price}</p>
-              <button onclick="addToCart(${product.id})">Add to Cart</button>
-          `;
-        productList.appendChild(productElement);
-      });
-    })
-    .catch(function (error) {
-      document.getElementById("result").innerHTML =
-        "Error: " + error.response.data.error;
-    });
+function addToCart(productId) {
+  if (!cart.includes(productId)) {
+    cart.push(productId);
+    console.log("Added product to cart: " + productId);
+    updateCartDisplay();
+  } else {
+    console.log("Product already in cart: " + productId);
+  }
 }
 
-function addToCart(productId) {
-  // Add the selected product to the cart
-  // You can implement the cart functionality as needed
-  console.log("Added product to cart: " + productId);
+function updateCartDisplay() {
+  const cartItems = document.getElementById("cart-items");
+  cartItems.innerHTML = ""; // Clear existing cart items
+  cart.forEach((productId) => {
+    const li = document.createElement("li");
+    li.textContent = `Product ID: ${productId}`;
+    cartItems.appendChild(li);
+  });
+}
+
+function getProductIdsFromCart() {
+  return cart;
 }
 
 function checkout() {
-  const productIds = getProductIdsFromCart(); // Implement this function to get product IDs from the cart
+  const productIds = getProductIdsFromCart();
   axios
     .post("/checkout", { product_ids: productIds })
     .then((response) => {
@@ -85,6 +79,7 @@ function checkout() {
       document.getElementById(
         "result"
       ).innerHTML = `Checkout successful! You earned ${response.data.total_points_earned} points.`;
+      cart = []; // Clear the cart after successful checkout
     })
     .catch((error) => {
       document.getElementById(
