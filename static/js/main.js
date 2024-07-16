@@ -76,6 +76,14 @@ function checkout() {
       ) {
         displayMissingCategoryProducts(response.data.products_missing_category);
       }
+      if (
+        response.data.point_earning_rules_missing &&
+        response.data.point_earning_rules_missing.length > 0
+      ) {
+        displayMissingPointEarningRules(
+          response.data.point_earning_rules_missing
+        );
+      }
       document.getElementById(
         "result"
       ).innerHTML = `Checkout successful! You earned ${response.data.total_points_earned} points.`;
@@ -109,6 +117,19 @@ function displayMissingCategoryProducts(missingCategoryProducts) {
   missingCategoryProducts.forEach((productId) => {
     const li = document.createElement("li");
     li.textContent = `Product ID ${productId} has no category defined.`;
+    ul.appendChild(li);
+  });
+  errorMessagesDiv.appendChild(ul);
+}
+
+function displayMissingPointEarningRules(missingPointEarningRules) {
+  const errorMessagesDiv = document.getElementById("error-messages");
+  errorMessagesDiv.innerHTML +=
+    "<h3>Warning: Some products are missing point earning rules</h3>";
+  const ul = document.createElement("ul");
+  missingPointEarningRules.forEach((productId) => {
+    const li = document.createElement("li");
+    li.textContent = `Product ID ${productId} has no point earning rules defined.`;
     ul.appendChild(li);
   });
   errorMessagesDiv.appendChild(ul);

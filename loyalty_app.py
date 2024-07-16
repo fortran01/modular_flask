@@ -112,6 +112,7 @@ def checkout() -> Response:
         total_points_earned: int = 0
         invalid_products: List[int] = []
         products_missing_category: List[int] = []
+        point_earning_rules_missing: List[int] = []
 
         # For each product in the transaction
         for product_id in product_ids:
@@ -135,7 +136,13 @@ def checkout() -> Response:
                 .order_by(PointEarningRules.start_date.desc()).first()
 
             if not point_earning_rule:
-                continue  # Skip if no rule is found
+                # Try to fetch the default rule
+                point_earning_rule = db.session.query(PointEarningRules) \
+                    .filter_by(category_id=0) \
+                    .order_by(PointEarningRules.start_date.desc()).first()
+                if not point_earning_rule:
+                    point_earning_rules_missing.append(product_id)
+                    continue  # Skip if no default rule is found either
 
             # Calculate the points earned
             product_price = float(product.price.scalar())
@@ -164,7 +171,8 @@ def checkout() -> Response:
         response = jsonify({
             "total_points_earned": total_points_earned,
             "invalid_products": invalid_products,
-            "products_missing_category": products_missing_category
+            "products_missing_category": products_missing_category,
+            "point_earning_rules_missing": point_earning_rules_missing
         })
         response.status_code = 200
         return response
