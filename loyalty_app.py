@@ -1,11 +1,11 @@
 from flask import Flask, request, jsonify, render_template, Response
-from models import (db, Customers, LoyaltyAccounts, PointTransactions,
-                    Products, Categories, PointEarningRules)
+from .models import (db, Customers, LoyaltyAccounts, PointTransactions,
+                     Products, Categories, PointEarningRules)
 import os
 from typing import List
 from sqlalchemy import update
 # Import the seed_database function
-from seed_database import seed_database
+from .seed_database import seed_database
 
 app = Flask(__name__)
 # Set a secret key for session handling
