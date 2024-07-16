@@ -4,14 +4,28 @@ from models import (db, Customers, LoyaltyAccounts, PointTransactions,
 import os
 from typing import List
 from sqlalchemy import update
+# Import the seed_database function
+from seed_database import seed_database
 
 app = Flask(__name__)
 # Set a secret key for session handling
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 
-# Configure your database connection here
+# The SQLite database is located in the 'instance' folder
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///loyalty_program.db'
 db.init_app(app)
+
+# Create the tables in the database if they don't exist and seed if necessary
+with app.app_context():
+    try:
+        db.create_all()
+        print("Tables created successfully")
+        # Check if the database is empty (e.g., no customers)
+        if db.session.query(Customers).count() == 0:
+            seed_database(db)
+            print("Database seeded successfully")
+    except Exception as e:
+        print(f"Database creation or seeding failed: {e}")
 
 
 @app.route('/')
@@ -161,4 +175,5 @@ def checkout() -> Response:
 
 
 if __name__ == '__main__':
+    print("Debug mode is:", app.debug)
     app.run(debug=True)
