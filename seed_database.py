@@ -24,6 +24,9 @@ def seed_database(db: SQLAlchemy) -> None:
     category1: Categories = Categories(name="Electronics")
     category2: Categories = Categories(name="Books")
 
+    # Adding a default category
+    default_category: Categories = Categories(id=0, name="Default")
+
     # Adding sample products
     product1: Products = Products(
         name="Laptop",
@@ -48,6 +51,11 @@ def seed_database(db: SQLAlchemy) -> None:
     loyalty_account2: LoyaltyAccounts = LoyaltyAccounts(
         customer=customer2, points=200)
 
+    # Adding a default point earning rule
+    default_rule: PointEarningRules = PointEarningRules(
+        category=default_category, points_per_dollar=1,
+        start_date=date(1900, 1, 1), end_date=date(2099, 12, 31))
+
     # Adding sample point earning rules
     rule1: PointEarningRules = PointEarningRules(
         category=category1, points_per_dollar=2, start_date=date(2023, 1, 1),
@@ -57,9 +65,9 @@ def seed_database(db: SQLAlchemy) -> None:
             2023, 1, 1), end_date=date(2023, 12, 31))
 
     # Adding to session
-    db.session.add_all([customer1, customer2, category1, category2, product1,
-                        product2, loyalty_account1, loyalty_account2, rule1,
-                        rule2])
+    db.session.add_all([customer1, customer2, default_category, category1,
+                        category2, product1, product2, loyalty_account1,
+                        loyalty_account2, default_rule, rule1, rule2])
 
     # Committing the session to the database
     db.session.commit()
