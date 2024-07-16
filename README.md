@@ -43,7 +43,23 @@ flask --app [app_name e.g., loyalty_app] run
 
 ## Test Database
 
-The SQLite database for this project is configured and created in the `loyalty_app.py` file. The database is located in the 'instance' directory. The tables are created using SQLAlchemy's ORM and are defined in the `models.py` file. When the Flask application starts, it initializes the database and creates the tables if they do not already exist.
+To create the SQLite database, you need to run the `loyalty_app.py` script directly. This is necessary because the Flask CLI does not automatically execute the code that initializes and seeds the database. By running the script directly, you ensure that the database setup code within the `app.app_context()` block is executed.
+
+Here are the steps to run the script using the Python CLI:
+
+1. Activate the virtual environment:
+
+```bash
+source venv/bin/activate
+```
+
+1. Run the script directly:
+
+```bash
+cd ../
+ls # should see the loyalty_app.py file
+python loyalty_app.py
+```
 
 To create the database and tables, the following code is used in `loyalty_app.py`:
 
