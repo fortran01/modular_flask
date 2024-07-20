@@ -4,7 +4,13 @@ This project serves as a guide to modular architecture in back-end development, 
 
 ## Features
 
-<!-- TODO -->
+- User authentication (login and logout)
+- Shopping cart management (add to cart, update cart display)
+- Checkout process with points calculation
+- Error handling for invalid products, missing categories, and missing point earning rules
+- Display of error messages for various checkout issues
+- Database initialization and seeding
+- Loyalty account management and point transactions
 
 ## Setup
 
