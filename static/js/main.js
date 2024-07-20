@@ -36,6 +36,7 @@ function logout() {
 }
 
 function addToCart(productId) {
+  document.getElementById("result").innerHTML = ""; // Clear the checkout success message
   if (!cart.includes(productId)) {
     cart.push(productId);
     console.log("Added product to cart: " + productId);
@@ -88,6 +89,7 @@ function checkout() {
         "result"
       ).innerHTML = `Checkout successful! You earned ${response.data.total_points_earned} points.`;
       cart = []; // Clear the cart after successful checkout
+      updateCartDisplay(); // Update the cart display
     })
     .catch((error) => {
       document.getElementById(
