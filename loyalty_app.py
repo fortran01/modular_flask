@@ -2,14 +2,12 @@ from flask import Flask, request, jsonify, render_template, Response
 from .models import (db, Customers, LoyaltyAccounts, PointTransactions,
                      Products, Categories, PointEarningRules)
 import os
-from typing import List
-from sqlalchemy import update, Column
-from sqlalchemy.sql import ColumnElement
-from decimal import Decimal
+from typing import List, Optional
+from sqlalchemy import update
 # Import the seed_database function
 from .seed_database import seed_database
 
-app = Flask(__name__)
+app: Flask = Flask(__name__)
 # Set a secret key for session handling
 app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 
@@ -55,14 +53,15 @@ def login() -> Response:
     """
     if not request.json or 'customer_id' not in request.json:
         app.logger.error("Login attempt without customer_id")
-        response = jsonify({'success': False, 'error': 'Missing customer ID'})
+        response: Response = jsonify(
+            {'success': False, 'error': 'Missing customer ID'})
         response.status_code = 400
         return response
 
     customer_id: str = request.json['customer_id']
     app.logger.debug(f"Attempting login for customer_id: {customer_id}")
 
-    customer: Customers | None = db.session.get(Customers, customer_id)
+    customer: Optional[Customers] = db.session.get(Customers, customer_id)
     if customer:
         response = jsonify({'success': True})
         response.set_cookie('customer_id', customer_id)
@@ -71,7 +70,8 @@ def login() -> Response:
     else:
         app.logger.error(
             f"Invalid login attempt for customer_id: {customer_id}")
-        response = jsonify({'success': False, 'error': 'Invalid customer ID'})
+        response = jsonify(
+            {'success': False, 'error': 'Invalid customer ID'})
         response.status_code = 401
         return response
 
@@ -84,7 +84,7 @@ def logout() -> Response:
     Returns:
         Response: JSON response indicating success of logout.
     """
-    response = jsonify({'success': True})
+    response: Response = jsonify({'success': True})
     response.delete_cookie('customer_id')
     return response
 
@@ -100,14 +100,15 @@ def checkout() -> Response:
     """
     if 'customer_id' in request.cookies:
         customer_id: str = request.cookies['customer_id']
-        product_ids: list[int] = request.json.get(
+        product_ids: List[int] = request.json.get(
             'product_ids', []) if request.json else []
 
         # Retrieve the customer's LoyaltyAccount
-        loyalty_account = db.session.query(LoyaltyAccounts).filter_by(
-            customer_id=customer_id).first()
+        loyalty_account: Optional[LoyaltyAccounts] = db.session.query(
+            LoyaltyAccounts).filter_by(customer_id=customer_id).first()
         if not loyalty_account:
-            response = jsonify({"error": "Loyalty account not found"})
+            response: Response = jsonify(
+                {"error": "Loyalty account not found"})
             response.status_code = 404
             return response
 
@@ -119,12 +120,13 @@ def checkout() -> Response:
         # For each product in the transaction
         for product_id in product_ids:
             # Determine the product's category
-            product = db.session.get(Products, product_id)
+            product: Optional[Products] = db.session.get(Products, product_id)
             if not product:
                 invalid_products.append(product_id)
                 continue  # Skip if product is not found
 
-            category = db.session.get(Categories, product.category_id)
+            category: Optional[Categories] = db.session.get(
+                Categories, product.category_id)
             if not category:
                 app.logger.error(
                     f"Category not found for product ID: {product_id}")
@@ -133,9 +135,9 @@ def checkout() -> Response:
 
             # Look up the applicable PointEarningRule for that category
             # Assuming the latest rule is applicable
-            point_earning_rule = db.session.query(PointEarningRules) \
-                .filter_by(category_id=category.id) \
-                .order_by(PointEarningRules.start_date.desc()).first()
+            point_earning_rule: Optional[PointEarningRules] = db.session.query(
+                PointEarningRules).filter_by(category_id=category.id).order_by(
+                PointEarningRules.start_date.desc()).first()
 
             if not point_earning_rule:
                 # Try to fetch the default rule
@@ -154,7 +156,7 @@ def checkout() -> Response:
             points_earned: int = product_price * points_per_dollar
 
             # Create a PointTransaction record
-            point_transaction = PointTransactions(
+            point_transaction: PointTransactions = PointTransactions(
                 loyalty_account_id=loyalty_account.id,
                 product_id=product.id,
                 points_earned=points_earned,
