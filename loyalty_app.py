@@ -3,7 +3,9 @@ from .models import (db, Customers, LoyaltyAccounts, PointTransactions,
                      Products, Categories, PointEarningRules)
 import os
 from typing import List
-from sqlalchemy import update
+from sqlalchemy import update, Column
+from sqlalchemy.sql import ColumnElement
+from decimal import Decimal
 # Import the seed_database function
 from .seed_database import seed_database
 
@@ -60,7 +62,7 @@ def login() -> Response:
     customer_id: str = request.json['customer_id']
     app.logger.debug(f"Attempting login for customer_id: {customer_id}")
 
-    customer: Customers | None = db.session.query(Customers).get(customer_id)
+    customer: Customers | None = db.session.get(Customers, customer_id)
     if customer:
         response = jsonify({'success': True})
         response.set_cookie('customer_id', customer_id)
@@ -117,12 +119,12 @@ def checkout() -> Response:
         # For each product in the transaction
         for product_id in product_ids:
             # Determine the product's category
-            product = db.session.query(Products).get(product_id)
+            product = db.session.get(Products, product_id)
             if not product:
                 invalid_products.append(product_id)
                 continue  # Skip if product is not found
 
-            category = db.session.query(Categories).get(product.category_id)
+            category = db.session.get(Categories, product.category_id)
             if not category:
                 app.logger.error(
                     f"Category not found for product ID: {product_id}")
@@ -146,10 +148,10 @@ def checkout() -> Response:
 
             # Calculate the points earned
             # Correctly access the price of the product
-            product_price = float(product.price)
+            product_price: int = int(product.price)
             # Assuming this is also a direct attribute
-            points_per_dollar = point_earning_rule.points_per_dollar
-            points_earned: int = int(product_price * points_per_dollar)
+            points_per_dollar: int = int(point_earning_rule.points_per_dollar)
+            points_earned: int = product_price * points_per_dollar
 
             # Create a PointTransaction record
             point_transaction = PointTransactions(
