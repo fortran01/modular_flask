@@ -145,8 +145,10 @@ def checkout() -> Response:
                     continue  # Skip if no default rule is found either
 
             # Calculate the points earned
-            product_price = float(product.price.scalar())
-            points_per_dollar = point_earning_rule.points_per_dollar.scalar()
+            # Correctly access the price of the product
+            product_price = float(product.price)
+            # Assuming this is also a direct attribute
+            points_per_dollar = point_earning_rule.points_per_dollar
             points_earned: int = int(product_price * points_per_dollar)
 
             # Create a PointTransaction record
