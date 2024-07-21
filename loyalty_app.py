@@ -36,9 +36,11 @@ def index() -> str:
     Returns:
         str: Rendered HTML of the index page.
     """
-    if 'customer_id' in request.cookies:
+    customer_id = request.cookies.get('customer_id', None)
+    if customer_id:
         products: List[Products] = db.session.query(Products).all()
-        return render_template('index.html', products=products, logged_in=True)
+        return render_template('index.html', products=products, logged_in=True,
+                               customer_id=customer_id)
     else:
         return render_template('index.html', logged_in=False)
 
