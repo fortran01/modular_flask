@@ -64,7 +64,7 @@ source venv/bin/activate
 ```bash
 cd ../
 ls # should see the loyalty_app.py file
-python loyalty_app.py
+python -m modular_flask.loyalty_app
 ```
 
 To create the database and tables, the following code is used in `loyalty_app.py`:
