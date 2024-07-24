@@ -1,6 +1,6 @@
 # modular_flask
 
-This project serves as a guide to modular architecture in back-end development, with practical examples demonstrated using the Python programming language and the Flask framework. It provides in-depth discussions of key concepts and patterns, such as the Script Pattern vs. Domain Model, various types of models in back-end systems, and the role of services in mapping requests to responses. Additionally, it covers service development techniques, dependency injection, serialization/deserialization processes, and modern development techniques like debugging, all within the context of Python and Flask. By the end of this project, participants will gain a thorough understanding of how to design and implement maintainable, scalable, and robust back-end systems using these modular architecture principles, as exemplified through Python and Flask.
+This project implements a Customer Loyalty Program Management system, focusing on the Point Accrual Problem using the Script Pattern approach. It features a modular Flask application that orchestrates customer interactions, product catalog management, and loyalty transactions to accrue and redeem points based on predefined rules. The system leverages the Script Pattern to simplify complex business logic into manageable and executable scripts, facilitating easier maintenance and scalability.
 
 ## Features
 
@@ -41,13 +41,7 @@ Activate the virtual environment:
 source venv/bin/activate
 ```
 
-Start the Flask server by running:
-
-```bash
-flask --app [app_name e.g., loyalty_app] run
-```
-
-## Test Database
+### Test with a database
 
 To create the SQLite database, you need to run the `loyalty_app.py` script directly. This is necessary because the Flask CLI does not automatically execute the code that initializes and seeds the database. By running the script directly, you ensure that the database setup code within the `app.app_context()` block is executed.
 
