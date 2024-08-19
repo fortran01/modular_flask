@@ -56,8 +56,8 @@ source venv/bin/activate
 1. Run the script directly:
 
 ```bash
-cd ../
 ls # should see the loyalty_app.py file
+cd ../
 python -m modular_flask.loyalty_app
 ```
 
