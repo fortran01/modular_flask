@@ -17,6 +17,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run tests
         run: |
+          cd .. # go to the parent directory
           python -m modular_flask.loyalty_app &
           PID=$!
           sleep 3
